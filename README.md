@@ -16,21 +16,25 @@ gem 'will_paginate', github: 'jonatack/will_paginate'
 
 ## Basic use
 
+In the controller:
+
 ```ruby
-  # perform a paginated query:
+  # perform a paginated query
   @posts = Post.paginate(page: params[:page])
 
-  # or, use an explicit "per page" limit:
+  # use an explicit "per page" limit
   Post.paginate(page: params[:page], per_page: 30)
 
-  # will_paginate in Active Record returns a chainable relation
+  # will_paginate returns a chainable Active Record relation
   Post.where(published: true).paginate(page: params[:page]).order(id: :desc)
 
-  # the new, shorter page() method
+  # the new, shorter #page method
   Post.page(params[:page]).order(created_at: :asc)
 ```
+
+In the view, to render pagination links:
+
 ```erb
-  # render page links in the view:
   <%= will_paginate @posts %>
 ```
 
