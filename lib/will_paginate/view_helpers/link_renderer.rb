@@ -122,6 +122,9 @@ module WillPaginate
           if value.is_a?(Hash) and (existing.is_a?(Hash) or existing.nil?)
             symbolized_update(existing || (target[key] = {}), value)
           else
+            if value.instance_variable_defined?(:@parameters)
+              value = value.instance_variable_get(:@parameters)
+            end
             target[key] = value
           end
         end
