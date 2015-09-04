@@ -9,7 +9,7 @@ unless Hash.method_defined? :except
       rejected = Set.new(respond_to?(:convert_key) ? keys.map { |key| convert_key(key) } : keys)
       reject { |key,| rejected.include?(key) }
     end
- 
+
     # Replaces the hash without only the given keys.
     def except!(*keys)
       replace(except(*keys))
@@ -20,10 +20,10 @@ end
 unless String.method_defined? :underscore
   String.class_eval do
     def underscore
-      self.to_s.gsub(/::/, '/').
+      self.to_s.gsub(/::/, '/'.freeze).
         gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').
         gsub(/([a-z\d])([A-Z])/,'\1_\2').
-        tr("-", "_").
+        tr("-".freeze, "_".freeze).
         downcase
     end
   end

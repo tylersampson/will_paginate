@@ -21,12 +21,12 @@ module WillPaginate
 
     # default view options
     self.pagination_options = Deprecation::Hash.new \
-      :class          => 'pagination',
+      :class          => 'pagination'.freeze,
       :previous_label => nil,
       :next_label     => nil,
       :inner_window   => 4, # links around the current page
       :outer_window   => 1, # links around beginning and end
-      :link_separator => ' ', # single space is friendly to spiders and non-graphic browsers
+      :link_separator => ' '.freeze, # single space is friendly to spiders and non-graphic browsers
       :param_name     => :page,
       :params         => nil,
       :page_links     => true,
@@ -42,7 +42,7 @@ module WillPaginate
 
     # Returns HTML representing page links for a WillPaginate::Collection-like object.
     # In case there is no more than one page in total, nil is returned.
-    # 
+    #
     # ==== Options
     # * <tt>:class</tt> -- CSS class name for the generated DIV (default: "pagination")
     # * <tt>:previous_label</tt> -- default: "« Previous"
@@ -61,7 +61,7 @@ module WillPaginate
     #
     # All options not recognized by will_paginate will become HTML attributes on the container
     # element for pagination links (the DIV). For example:
-    # 
+    #
     #   <%= will_paginate @posts, :style => 'color:blue' %>
     #
     # will result in:
@@ -74,8 +74,10 @@ module WillPaginate
 
       options = WillPaginate::ViewHelpers.pagination_options.merge(options)
 
-      options[:previous_label] ||= will_paginate_translate(:previous_label) { '&#8592; Previous' }
-      options[:next_label]     ||= will_paginate_translate(:next_label) { 'Next &#8594;' }
+      options[:previous_label] ||=
+        will_paginate_translate(:previous_label) { '&#8592; Previous'.freeze }
+      options[:next_label] ||=
+        will_paginate_translate(:next_label) { 'Next &#8594;'.freeze }
 
       # get the renderer instance
       renderer = case options[:renderer]
@@ -105,7 +107,7 @@ module WillPaginate
     def page_entries_info(collection, options = {})
       model = options[:model]
       model = collection.first.class unless model or collection.empty?
-      model ||= 'entry'
+      model ||= 'entry'.freeze
       model_key = if model.respond_to? :model_name
                     model.model_name.i18n_key  # ActiveModel::Naming
                   else
@@ -113,21 +115,21 @@ module WillPaginate
                   end
 
       if options.fetch(:html, true)
-        b, eb = '<b>', '</b>'
-        sp = '&nbsp;'
-        html_key = '_html'
+        b, eb = '<b>'.freeze, '</b>'.freeze
+        sp = '&nbsp;'.freeze
+        html_key = '_html'.freeze
       else
-        b = eb = html_key = ''
-        sp = ' '
+        b = eb = html_key = ''.freeze
+        sp = ' '.freeze
       end
 
       model_count = collection.total_pages > 1 ? 5 : collection.size
-      defaults = ["models.#{model_key}"]
+      defaults = ["models.#{model_key}".freeze].freeze
       defaults << Proc.new { |_, opts|
         if model.respond_to? :model_name
           model.model_name.human(:count => opts[:count])
         else
-          name = model_key.to_s.tr('_', ' ')
+          name = model_key.to_s.tr('_'.freeze, ' '.freeze)
           raise "can't pluralize model name: #{model.inspect}" unless name.respond_to? :pluralize
           opts[:count] == 1 ? name : name.pluralize
         end

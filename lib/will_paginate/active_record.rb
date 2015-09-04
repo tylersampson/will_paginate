@@ -10,10 +10,10 @@ end
 
 module WillPaginate
   # = Paginating finders for ActiveRecord models
-  # 
+  #
   # WillPaginate adds +paginate+, +per_page+ and other methods to
   # ActiveRecord::Base class methods and associations.
-  # 
+  #
   # In short, paginating finders are equivalent to ActiveRecord finders; the
   # only difference is that we start with "paginate" instead of "find" and
   # that <tt>:page</tt> is required parameter:
@@ -90,7 +90,7 @@ module WillPaginate
           rel = self.except(*excluded)
           # TODO: hack. decide whether to keep
           rel = rel.apply_finder_options(@wp_count_options) if defined? @wp_count_options
-          
+
           column_name = (select_for_count(rel) || :all)
           rel.count(column_name)
         else
@@ -145,10 +145,10 @@ module WillPaginate
         other.wp_count_options = @wp_count_options if defined? @wp_count_options
         other
       end
-      
+
       def select_for_count(rel)
         if rel.select_values.present?
-          select = rel.select_values.join(", ")
+          select = rel.select_values.join(", ".freeze)
           select if select !~ /[,*]/
         end
       end
@@ -174,11 +174,7 @@ module WillPaginate
       def page(num)
         rel = if ::ActiveRecord::Relation === self
           self
-        elsif !defined?(::ActiveRecord::Scoping) or ::ActiveRecord::Scoping::ClassMethods.method_defined? :with_scope
-          # Active Record 3
-          scoped
         else
-          # Active Record 4
           all
         end
 
@@ -198,7 +194,7 @@ module WillPaginate
       # +per_page+.
       #
       # Example:
-      # 
+      #
       #   @developers = Developer.paginate_by_sql ['select * from developers where salary > ?', 80000],
       #                          :page => params[:page], :per_page => 3
       #
@@ -206,7 +202,7 @@ module WillPaginate
       # supply <tt>:total_entries</tt>. If you experience problems with this
       # generated SQL, you might want to perform the count manually in your
       # application.
-      # 
+      #
       def paginate_by_sql(sql, options)
         pagenum  = options.fetch(:page) { raise ArgumentError, ":page parameter required" } || 1
         per_page = options[:per_page] || self.per_page
@@ -215,27 +211,17 @@ module WillPaginate
         WillPaginate::Collection.create(pagenum, per_page, total) do |pager|
           query = sanitize_sql(sql.dup)
           original_query = query.dup
-          oracle = self.connection.adapter_name =~ /^(oracle|oci$)/i
 
           # add limit, offset
-          if oracle
-            query = <<-SQL
-              SELECT * FROM (
-                SELECT rownum rnum, a.* FROM (#{query}) a
-                WHERE rownum <= #{pager.offset + pager.per_page}
-              ) WHERE rnum >= #{pager.offset}
-            SQL
-          else
-            query << " LIMIT #{pager.per_page} OFFSET #{pager.offset}"
-          end
+          query << " LIMIT #{pager.per_page} OFFSET #{pager.offset}".freeze
 
           # perfom the find
           pager.replace find_by_sql(query)
 
           unless pager.total_entries
-            count_query = original_query.sub /\bORDER\s+BY\s+[\w`,\s.]+$/mi, ''
-            count_query = "SELECT COUNT(*) FROM (#{count_query})"
-            count_query << ' AS count_table' unless oracle
+            count_query = original_query.sub /\bORDER\s+BY\s+[\w`,\s.]+$/mi, ''.freeze
+            count_query = "SELECT COUNT(*) FROM (#{count_query})".freeze
+            count_query << ' AS count_table'.freeze
             # perform the count query
             pager.total_entries = count_by_sql(count_query)
           end

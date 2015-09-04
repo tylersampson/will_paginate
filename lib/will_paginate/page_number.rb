@@ -14,7 +14,7 @@ module WillPaginate
 
     def initialize(value, name)
       value = Integer(value)
-      if 'offset' == name ? (value < 0 or value > BIGINT) : value < 1
+      if 'offset'.freeze == name ? (value < 0 or value > BIGINT) : value < 1
         raise RangeError, "invalid #{name}: #{value.inspect}"
       end
       @name = name
@@ -31,7 +31,7 @@ module WillPaginate
     end
 
     def to_offset(per_page)
-      PageNumber.new((to_i - 1) * per_page.to_i, 'offset')
+      PageNumber.new((to_i - 1) * per_page.to_i, 'offset'.freeze)
     end
 
     def kind_of?(klass)
@@ -48,7 +48,7 @@ module WillPaginate
   }
 
   # An idemptotent coercion method
-  def self.PageNumber(value, name = 'page')
+  def self.PageNumber(value, name = 'page'.freeze)
     case value
     when PageNumber then value
     else PageNumber.new(value, name)

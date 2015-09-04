@@ -44,30 +44,30 @@ module WillPaginate
         unless page == current_page
           link(page, page, :rel => rel_value(page))
         else
-          tag(:em, page, :class => 'current')
+          tag(:em, page, :class => 'current'.freeze)
         end
       end
 
       def gap
-        text = @template.will_paginate_translate(:page_gap) { '&hellip;' }
+        text = @template.will_paginate_translate(:page_gap) { '&hellip;'.freeze }
         %(<span class="gap">#{text}</span>)
       end
 
       def previous_page
         num = @collection.current_page > 1 && @collection.current_page - 1
-        previous_or_next_page(num, @options[:previous_label], 'previous_page')
+        previous_or_next_page(num, @options[:previous_label], 'previous_page'.freeze)
       end
 
       def next_page
         num = @collection.current_page < total_pages && @collection.current_page + 1
-        previous_or_next_page(num, @options[:next_label], 'next_page')
+        previous_or_next_page(num, @options[:next_label], 'next_page'.freeze)
       end
 
       def previous_or_next_page(page, text, classname)
         if page
           link(text, page, :class => classname)
         else
-          tag(:span, text, :class => classname + ' disabled')
+          tag(:span, text, :class => classname + ' disabled'.freeze)
         end
       end
 
@@ -108,9 +108,9 @@ module WillPaginate
 
       def rel_value(page)
         case page
-        when @collection.current_page - 1; 'prev' + (page == 1 ? ' start' : '')
-        when @collection.current_page + 1; 'next'
-        when 1; 'start'
+        when @collection.current_page - 1; 'prev'.freeze + (page == 1 ? ' start'.freeze : ''.freeze)
+        when @collection.current_page + 1; 'next'.freeze
+        when 1; 'start'.freeze
         end
       end
 
