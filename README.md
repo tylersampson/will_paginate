@@ -38,7 +38,7 @@ In the view, to render pagination links:
   <%= will_paginate @posts %>
 ```
 
-And that's it! You just need to add some CSS styles to [make those pagination links prettier](http://mislav.uniqpath.com/will_paginate).
+And that's it! You just need to add some CSS styles to [make those pagination links prettier](http://mislav.github.io/will_paginate/).
 
 You can customize the default "per_page" value:
 
