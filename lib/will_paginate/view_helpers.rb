@@ -159,7 +159,7 @@ module WillPaginate
       end
 
       model_count = collection.total_pages > 1 ? 5 : collection.size
-      defaults = ["models.#{model_key}".freeze].freeze
+      defaults = ["models.#{model_key}".freeze]
       defaults << Proc.new { |_, opts|
         if model.respond_to? :model_name
           model.model_name.human(:count => opts[:count])
